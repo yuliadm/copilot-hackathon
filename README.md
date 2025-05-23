@@ -135,8 +135,6 @@ This simple Battleship game demo features a 10x10 board, classic ship types, dra
 
 ---
 
-If you need a README.md or inline code comments, or want to generate OpenAPI/Swagger docs for the API, just ask!
-
 
 
 
@@ -149,3 +147,45 @@ If you need a README.md or inline code comments, or want to generate OpenAPI/Swa
 - When a player tries to place a ship (via `/api/place_ships`), the backend uses `is_valid_placement` to validate the placement.
 - When the AI places ships randomly, it also uses this function, retrying until a valid spot is found.
 
+Certainly! Here’s a detailed explanation of the RL Agent logic in your Battleship game:
+
+---
+
+#### RL Agent Logic (Class `RLAgent`)
+
+The RL Agent is a simple rule-based AI that simulates a "smart" opponent. It uses a combination of random guessing and targeted hunting after a hit, mimicking a basic Battleship strategy.
+
+##### 1. **State Tracking**
+- **`self.possible`**:  
+  A set of all board coordinates the agent has not fired at yet. This prevents firing at the same cell twice.
+- **`self.hunt_targets`**:  
+  A queue of coordinates to target next if the agent is in "hunt mode" (i.e., after a hit, it tries to finish off the ship by targeting neighbors).
+- **`self.last_hits`**:  
+  A list of coordinates where the agent has recently hit a ship but not yet sunk it. Used to inform hunting.
+
+---
+
+##### 2. **Choosing an Action (`choose_action`)**
+- **If there are hunt targets:**  
+  - The agent pops the first coordinate from `hunt_targets`.
+  - If that cell is still possible and not already hit/missed, it fires there.
+  - This focuses the agent’s fire around previous hits.
+
+- **If there are no hunt targets:**  
+  - The agent picks a random coordinate from `self.possible`.
+  - This is the "search mode"—random guessing until a hit is found.
+
+---
+
+### 3. **Learning from Results (`notify_result`)**
+
+- **If the shot was a hit:**
+  - The agent adds all orthogonal neighbors (up, down, left, right) of the hit cell to `hunt_targets` (if they haven’t been fired at yet).
+  - The hit coordinate is added to `last_hits`.
+
+- **If a ship is sunk (`sunk_coords` is not None):**
+  - The agent marks all cells around the sunk ship (including diagonals) as "explored" by removing them from `self.possible`.
+  - This prevents the agent from wasting shots around a ship that’s already sunk.
+  - `last_hits` is cleared, since the hunt is over.
+
+---
