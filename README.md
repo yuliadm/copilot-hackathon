@@ -2,7 +2,9 @@
 
 ## Overview
 
-This simple Battleship game demo features a 10x10 board, classic ship types, drag-and-drop ship placement, and a basic RL agent opponent. The backend is written in Python using Flask, and the frontend is a single-page HTML/JS app.
+This simple Battleship game demo, created with Copilot, features a 10x10 board, classic ship types, drag-and-drop ship placement, and a basic RL agent opponent. The backend is written in Python using Flask, and the frontend is a single-page HTML/JS app.
+
+<img title="battleship" alt="battleship" src="/assets/battleship.png">
 
 ---
 
