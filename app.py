@@ -35,6 +35,13 @@ def is_valid_placement(board, coords):
             return False
         if board[x][y] != EMPTY:
             return False
+        # Check all adjacent cells (including diagonals)
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < BOARD_SIZE and 0 <= ny < BOARD_SIZE:
+                    if (nx, ny) not in coords and board[nx][ny] == "S":
+                        return False
     return True
 
 def place_ship(board, coords):
@@ -225,6 +232,30 @@ def state():
         "game_over": game["game_over"],
         "winner": game["winner"]
     })
+
+# Place ships randomly for the agent, respecting the adjacency rule
+import copy
+
+def place_ships_randomly(board):
+    for ship in SHIP_TYPES:
+        placed = False
+        attempts = 0
+        while not placed and attempts < 100:
+            attempts += 1
+            orientation = random.choice(["H", "V"])
+            if orientation == "H":
+                x = random.randint(0, BOARD_SIZE - ship["size"])
+                y = random.randint(0, BOARD_SIZE - 1)
+                coords = [(x + i, y) for i in range(ship["size"])]
+            else:
+                x = random.randint(0, BOARD_SIZE - 1)
+                y = random.randint(0, BOARD_SIZE - ship["size"])
+                coords = [(x, y + i) for i in range(ship["size"])]
+            if is_valid_placement(board, coords):
+                place_ship(board, coords)
+                placed = True
+        if not placed:
+            raise Exception(f"Failed to place ship: {ship['name']}")
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")

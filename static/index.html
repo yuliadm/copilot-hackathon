@@ -147,7 +147,19 @@ function canPlaceShip(board, x, y, ship, orientation) {
         let nx = x + (orientation === 'vertical' ? k : 0);
         let ny = y + (orientation === 'horizontal' ? k : 0);
         if (nx < 0 || ny < 0 || nx >= BOARD_SIZE || ny >= BOARD_SIZE) return null;
+        // Check for overlap
         if (board[nx][ny] !== '.') return null;
+        // Check adjacency (including diagonals)
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                let ax = nx + dx, ay = ny + dy;
+                if (ax < 0 || ay < 0 || ax >= BOARD_SIZE || ay >= BOARD_SIZE) continue;
+                // Only check cells not part of this ship
+                if (!coords.some(([cx, cy]) => cx === ax && cy === ay) && board[ax][ay] === 'S') {
+                    return null;
+                }
+            }
+        }
         coords.push([nx, ny]);
     }
     return coords;
