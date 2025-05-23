@@ -152,11 +152,13 @@ def fire():
         board[x][y] = MISS
     if player == 1:
         rl_agent.notify_result(x, y, hit, sunk_coords)
+    # FIX: Stop the game immediately if all opponent ships are sunk
     if all_ships_sunk(ships):
         game["game_over"] = True
         game["winner"] = player
     else:
         game["current_player"] = opponent
+        # Only let the agent fire if the game is not over
         if game["current_player"] == 1 and not game["game_over"]:
             ax, ay = rl_agent.choose_action(game["boards"][0])
             fire_agent(game_id, 1, ax, ay)
@@ -190,6 +192,7 @@ def fire_agent(game_id, player, x, y):
     if not hit:
         board[x][y] = MISS
     rl_agent.notify_result(x, y, hit, sunk_coords)
+    # FIX: Stop the game immediately if all opponent ships are sunk
     if all_ships_sunk(ships):
         game["game_over"] = True
         game["winner"] = player
