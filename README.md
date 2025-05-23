@@ -112,7 +112,7 @@ This simple Battleship game demo features a 10x10 board, classic ship types, dra
   - Hits and misses are visually marked.
   - The agent’s moves are automatic and follow the RL strategy.
 - **Design:**  
-  - Modern, clean, and responsive.
+  - Very basic.
   - Ships are visible only on the player’s own board.
 
 ---
